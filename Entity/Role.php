@@ -19,12 +19,15 @@ class Role implements RoleInterface
 {
   /**
    * @orm:Id
-   * @orm:Column(type="integer")
+   * @orm:Column(
+   *    name="roleId",
+   *    type="integer"
+   * )
    * @orm:GeneratedValue(strategy="AUTO")
    *
-   * @var integer $roleId
+   * @var integer $id
    */
-  protected $roleId;
+  protected $id;
   
   /**
    * @orm:Column(
@@ -48,6 +51,16 @@ class Role implements RoleInterface
    */
   protected $createdAt;
  
+  /**
+   * Gets the id.
+   *
+   * @return string The name.
+   */
+  public function getId()
+  {
+    return $this->id;
+  }
+  
   /**
    * Gets the role name.
    *

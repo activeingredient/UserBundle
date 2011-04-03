@@ -26,12 +26,15 @@ class User extends AbstractUser
   
   /**
    * @orm:Id
-   * @orm:Column(type="integer")
+   * @orm:Column(
+   *    name="userId",
+   *    type="integer"
+   * )
    * @orm:generatedValue(strategy="AUTO")
    * 
-   * @var integer $userId
+   * @var integer $id
    */
-  protected $userId;
+  protected $id;
   
   /**
    * @orm:Column(
@@ -230,8 +233,8 @@ class User extends AbstractUser
    * @orm:ManyToMany(targetEntity="Role")
    * @orm:JoinTable(
    *    name="UsersRoles",
-   *    joinColumns={@orm:JoinColumn(name="userId",referencedColumnName="userId")},
-   *    inverseJoinColumns={@orm:JoinColumn(name="roleId",referencedColumnName="roleId")}
+   *    joinColumns={@orm:JoinColumn(name="userId",referencedColumnName="id")},
+   *    inverseJoinColumns={@orm:JoinColumn(name="roleId",referencedColumnName="id")}
    * )
    *
    * @var ArrayCollection $roles
