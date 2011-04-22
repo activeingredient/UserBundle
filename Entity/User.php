@@ -142,17 +142,6 @@ class User extends AbstractUser
 
   /**
    * @orm:Column(
-   *    name="createdDateTime",
-   *    type="datetime",
-   *    nullable=false
-   * )
-   * 
-   * @var \DateTime $createdAt
-   */
-  protected $createdAt;
-
-  /**
-   * @orm:Column(
    *    name="updatedDateTime",
    *    type="datetime",
    *    nullable=false
@@ -230,18 +219,6 @@ class User extends AbstractUser
   protected $expiresAt;
 
   /**
-   * @orm:ManyToMany(targetEntity="Role")
-   * @orm:JoinTable(
-   *    name="UsersRoles",
-   *    joinColumns={@orm:JoinColumn(name="userId",referencedColumnName="id")},
-   *    inverseJoinColumns={@orm:JoinColumn(name="roleId",referencedColumnName="id")}
-   * )
-   *
-   * @var ArrayCollection $roles
-   */
-  protected $roles;
-
-  /**
    * @orm:Column(
    *    name="credentialsExpired",
    *    type="boolean"
@@ -310,6 +287,50 @@ class User extends AbstractUser
    */
   protected $mobile;
   
+  /**
+   * @orm:ManyToMany(targetEntity="Role")
+   * @orm:JoinTable(
+   *    name="UsersRoles",
+   *    joinColumns={@orm:JoinColumn(name="userId",referencedColumnName="id")},
+   *    inverseJoinColumns={@orm:JoinColumn(name="roleId",referencedColumnName="id")}
+   * )
+   *
+   * @var ArrayCollection $roles
+   */
+  protected $roles;
+  
+  /**
+   * @orm:OneToMany(
+   *    targetEntity="UserPreference",
+   *    inversedBy="user"
+   * )
+   */
+  protected $userPreferences;
+  
+  /**
+   * @orm:ManyToOne(
+   *    targetEntity="Organisation",
+   *    inversedBy="users"
+   * )
+   * @orm:JoinColumn(
+   *    name="organisationId",
+   *    referencedColumnName="id"
+   * )
+   */
+  protected $organisation;
+  
+  /**
+   * @orm:ManyToMany(targetEntity="Organisation")
+   * @orm:JoinTable(
+   *    name="UsersOrganisations",
+   *    joinColumns={@orm:JoinColumn(name="userId",referencedColumnName="id")},
+   *    inverseJoinColumns={@orm:JoinColumn(name="organisationId",referencedColumnName="id")}
+   * )
+   *
+   * @var ArrayCollection $associatedOrganisations
+   */
+  protected $associatedOrganisations;
+  
   public function __construct()
   {
     parent::__construct();
@@ -319,13 +340,13 @@ class User extends AbstractUser
   }
   
   /**
-   * Gets an array of roles.
-   * 
-   * @return array An array of Role objects
+   * ID wrapper
+   *
+   * @return id $id
    */
-  public function getRoles()
+  public function getUserId()
   {
-    return $this->roles->toArray();
+    return $this->id;
   }
   
   /**
@@ -334,12 +355,12 @@ class User extends AbstractUser
   public function addRole($role)
   {
     $role = strtoupper($role);
-    if ($role === self::ROLE_DEFAULT)
+    if($role === self::ROLE_DEFAULT)
     {
       return;
     }
     
-    if (!$this->roles->contains($role))
+    if(!$this->roles->contains($role))
     {
       $this->roles->add($role);
     }
@@ -399,5 +420,107 @@ class User extends AbstractUser
   public function getMobile()
   {
     return $this->mobile;
+  }
+ 
+  /**
+   * Sets the users collection.
+   *
+   * @param ArrayCollection $value The users.
+   */
+  public function setRoles($value)
+  {
+    $this->roles = $roles;
+  }
+  
+  /**
+   * Gets an array of roles.
+   * 
+   * @return ArrayCollection $roles
+   */
+  public function getRoles()
+  {
+    return $this->roles;
+  }
+  
+  /**
+   * Sets the user's primary organisation
+   *
+   * @param Ai\UserBundle\Entity\Organisation $value The organisation.
+   */
+  public function setOrganisation($value)
+  {
+    $this->organisation = $value;
+  }
+  
+  /**
+   * Gets the user's primary organisation.
+   * 
+   * @return Ai\UserBundle\Entity\Organisation $organisation
+   */
+  public function getOrganisation()
+  {
+    return $this->organisation;
+  }
+  
+  /**
+   * Sets the user's associated organisations.
+   *
+   * @param ArrayCollection $value The associated organisations.
+   */
+  public function setAssociatedOrganisations($value)
+  {
+    $this->associatedOrganisations = $value;
+  }
+  
+  /**
+   * Gets the user's associated organisations.
+   * 
+   * @return ArrayCollection $associatedOrganisations
+   */
+  public function getAssociatedOrganisations()
+  {
+    return $this->associatedOrganisations;
+  }
+  
+  /**
+   * Add an organisation to the list of associated organisations
+   */ 
+  public function addAssociatedOrganisation($organisation)
+  {
+    if(!$this->associatedOrganisations->contains($organisation))
+    {
+      $this->associatedOrganisations->add($organisation);
+    }
+  }
+  
+  /**
+   * Sets the user's preferences.
+   *
+   * @param ArrayCollection $value The user preferences.
+   */
+  public function setUserPreferences($value)
+  {
+    $this->userPreferences = $value;
+  }
+  
+  /**
+   * Gets the user's preferences.
+   * 
+   * @return ArrayCollection $userPreferences
+   */
+  public function getUserPreferences()
+  {
+    return $this->userPreferences;
+  }
+  
+  /**
+   * Add a preference to the list of user preferences
+   */ 
+  public function addUserPreference($userPreference)
+  {
+    if(!$this->userPreferences->contains($userPreference))
+    {
+      $this->userPreferences->add($userPreference);
+    }
   }
 }

@@ -42,9 +42,21 @@ class Role implements RoleInterface
   protected $name;
   
   /**
+   * @orm:ManyToMany(targetEntity="User")
+   * @orm:JoinTable(
+   *    name="UsersRoles",
+   *    joinColumns={@orm:JoinColumn(name="roleId",referencedColumnName="id")},
+   *    inverseJoinColumns={@orm:JoinColumn(name="userId",referencedColumnName="id")}
+   * )
+   *
+   * @var ArrayCollection $users
+   */
+  protected $users;
+  
+  /**
    * @orm:Column(
    *    type="datetime",
-   *    name="created_DateTime"
+   *    name="modifiedDateTime"
    * )
    *
    * @var DateTime $createdAt
@@ -59,6 +71,16 @@ class Role implements RoleInterface
   public function getId()
   {
     return $this->id;
+  }
+  
+  /**
+   * ID wrapper
+   *
+   * @return id $id
+   */
+  public function getRoleId()
+  {
+    return $this->getId();
   }
   
   /**
@@ -90,15 +112,7 @@ class Role implements RoleInterface
   {
     return $this->createdAt;
   }
-
-  /**
-   * Constructs a new instance of Role.
-   */
-  public function __construct()
-  {
-    $this->createdAt = new \DateTime();
-  }
-
+  
   /**
    * Implementation of getRole for the RoleInterface.
    * 
@@ -107,5 +121,33 @@ class Role implements RoleInterface
   public function getRole()
   {
     return $this->getName();
+  }
+  
+  /**
+   * Gets the users collection.
+   *
+   * @return ArrayCollection The users.
+   */
+  public function getUsers()
+  {
+    return $this->users;
+  }
+ 
+  /**
+   * Sets the users collection.
+   *
+   * @param ArrayCollection $value The users.
+   */
+  public function setUsers($value)
+  {
+    $this->users = $users;
+  }
+
+  /**
+   * Constructs a new instance of Role.
+   */
+  public function __construct()
+  {
+    $this->createdAt = new \DateTime();
   }
 }
